@@ -54,6 +54,7 @@ export default defineComponent({
   mounted() {
       const newPath = window.location.pathname;
       const loggedIn = localStorage.getItem("logged_in") == "true";
+      console.log(loggedIn)
       if (!loggedIn && newPath !== "/register" && newPath !== "/register/") {
         this.$router.push("/login");
       } else if (!loggedIn || newPath == "/register/" || newPath == "/register") {
