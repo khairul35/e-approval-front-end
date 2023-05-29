@@ -1,6 +1,6 @@
 const clientId = '219C2261C03B4A3685DF6EDC898EAD97';
 const clientSecret = 'x1E_RdPfZxxtC4eICylkSqsrwXZLju8sM1NISfzLL2M6YaAd';
-const redirectUris = 'https://e-approval.netlify.app/';
+const redirectUris = 'https://e-approval.netlify.app/app-integration';
 const scopes = [
   'openid',
   'profile',
