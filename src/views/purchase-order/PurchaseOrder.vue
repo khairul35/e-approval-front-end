@@ -262,36 +262,36 @@ import XeroRepository from '@/repository/XeroRepository';
 const columns = [
   {
     title: 'Description',
-    dataIndex: 'Description',
+    dataIndex: 'description',
     key: 'Description',
   },
   {
     title: 'Quantity',
-    dataIndex: 'Quantity',
+    dataIndex: 'quantity',
     key: 'Quantity',
     align: 'center',
   },
   {
     title: 'Unit Amount',
-    dataIndex: 'UnitAmount',
+    dataIndex: 'unitAmount',
     key: 'UnitAmount',
     align: 'center',
   },
   {
     title: 'Discount Rate',
-    dataIndex: 'DiscountRate',
+    dataIndex: 'discountRate',
     key: 'DiscountRate',
     align: 'center',
   },
   {
     title: 'Tax Amount',
-    dataIndex: 'TaxAmount',
+    dataIndex: 'taxAmount',
     key: 'TaxAmount',
     align: 'center',
   },
   {
     title: 'Total',
-    dataIndex: 'LineAmount',
+    dataIndex: 'total',
     key: 'LineAmount',
     align: 'center',
   },

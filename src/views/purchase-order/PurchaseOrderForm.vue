@@ -123,33 +123,33 @@
               <a-row :gutter="16">
                 <a-col :span="7">
                   <a-form-item label="Description">
-                    <a-input v-model:value="item.description" placeholder="Enter Description" />
+                    <a-input v-model:value="formState.lineItems[index].description" placeholder="Enter Description" />
                   </a-form-item>
                 </a-col>
                 <a-col :span="3">
                   <a-form-item label="Quantity">
-                    <a-input-number v-model:value="item.quantity" placeholder="Enter Quantity" />
+                    <a-input-number v-model:value="formState.lineItems[index].quantity" placeholder="Enter Quantity" />
                   </a-form-item>
                 </a-col>
                 <a-col :span="3">
                   <a-form-item label="Price per unit">
-                    <a-input-number v-model:value="item.unitAmount" placeholder="Enter Price per Unit" />
+                    <a-input-number v-model:value="formState.lineItems[index].unitAmount" placeholder="Enter Price per Unit" />
                   </a-form-item>
                 </a-col>
                 <a-col :span="3">
                   <a-form-item label="Discount">
-                    <a-input-number v-model:value="item.discountRate" placeholder="Enter Discount <Optional>" />
+                    <a-input-number v-model:value="formState.lineItems[index].discountRate" placeholder="Enter Discount <Optional>" />
                   </a-form-item>
                 </a-col>
                 <a-col :span="3">
                   <a-form-item label="Tax">
-                    <a-input-number v-model:value="item.tax" placeholder="Enter Discount <Optional>" />
+                    <a-input-number v-model:value="formState.lineItems[index].tax" placeholder="Enter Discount <Optional>" />
                   </a-form-item>
                 </a-col>
                 <a-col :span="3">
                   <p style="padding-top: 4px" align="center">Total</p>
                   <p align="center">
-                    {{ (item.quantity * item.unitAmount) - ((item.quantity * item.unitAmount) * item.discountRate / 100) }}
+                    {{ (formState.lineItems[index].quantity * formState.lineItems[index].unitAmount) - ((formState.lineItems[index].quantity * formState.lineItems[index].unitAmount) * formState.lineItems[index].discountRate / 100) }}
                   </p>
                 </a-col>
                 <a-col :span="2">
@@ -323,7 +323,7 @@ export default defineComponent({
         }
       },
       addItem() {
-        this.formState.LineItems.push({
+        this.formState.lineItems.push({
           description: "item",
           quantity: 1,
           unitAmount: 0,
@@ -336,7 +336,7 @@ export default defineComponent({
       },
       deleteLineItem(index: number) {
         if (index == 0) return this.$message.error('please insert at least one items');
-        this.formState.LineItems.splice(index, 1);
+        this.formState.lineItems.splice(index, 1);
       },
       onClose() {
         this.$emit("close")

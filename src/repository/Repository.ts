@@ -2,13 +2,12 @@ import axios from "axios";
 
 const repository = axios.create({
   baseURL: 'https://e-approval-backend.as.r.appspot.com/api/',
+  // baseURL: 'http://localhost:3000/api/',
   headers: {
     'Authorization': 'Bearer ' + localStorage.getItem('accessToken'),
     'Content-Type': 'application/json',
   },
 });
-
-console.log(localStorage.getItem('accessToken'));
 
 // let isRefreshing = false;
 let subscribers = [];
