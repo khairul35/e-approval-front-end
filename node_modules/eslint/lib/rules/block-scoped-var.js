@@ -8,15 +8,15 @@
 // Rule Definition
 //------------------------------------------------------------------------------
 
+/** @type {import('../shared/types').Rule} */
 module.exports = {
     meta: {
         type: "suggestion",
 
         docs: {
-            description: "enforce the use of variables within the scope they are defined",
-            category: "Best Practices",
+            description: "Enforce the use of variables within the scope they are defined",
             recommended: false,
-            url: "https://eslint.org/docs/rules/block-scoped-var"
+            url: "https://eslint.org/docs/latest/rules/block-scoped-var"
         },
 
         schema: [],
@@ -28,6 +28,7 @@ module.exports = {
 
     create(context) {
         let stack = [];
+        const sourceCode = context.sourceCode;
 
         /**
          * Makes a block scope.
@@ -83,7 +84,7 @@ module.exports = {
             }
 
             // Gets declared variables, and checks its references.
-            const variables = context.getDeclaredVariables(node);
+            const variables = sourceCode.getDeclaredVariables(node);
 
             for (let i = 0; i < variables.length; ++i) {
 
@@ -113,6 +114,8 @@ module.exports = {
             "SwitchStatement:exit": exitScope,
             CatchClause: enterScope,
             "CatchClause:exit": exitScope,
+            StaticBlock: enterScope,
+            "StaticBlock:exit": exitScope,
 
             // Finds and reports references which are outside of valid scope.
             VariableDeclaration: checkForVariables

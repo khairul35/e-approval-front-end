@@ -63,15 +63,15 @@ const OPTIONS_OR_INTEGER_SCHEMA = {
 // Rule Definition
 //------------------------------------------------------------------------------
 
+/** @type {import('../shared/types').Rule} */
 module.exports = {
     meta: {
         type: "layout",
 
         docs: {
-            description: "enforce a maximum line length",
-            category: "Stylistic Issues",
+            description: "Enforce a maximum line length",
             recommended: false,
-            url: "https://eslint.org/docs/rules/max-len"
+            url: "https://eslint.org/docs/latest/rules/max-len"
         },
 
         schema: [
@@ -97,7 +97,7 @@ module.exports = {
          */
         const URL_REGEXP = /[^:/?#]:\/\/[^?#]/u;
 
-        const sourceCode = context.getSourceCode();
+        const sourceCode = context.sourceCode;
 
         /**
          * Computes the length of a line that may contain tabs. The width of each
@@ -215,7 +215,7 @@ module.exports = {
          * Ensure that an array exists at [key] on `object`, and add `value` to it.
          * @param {Object} object the object to mutate
          * @param {string} key the object's key
-         * @param {*} value the value to add
+         * @param {any} value the value to add
          * @returns {void}
          * @private
          */
