@@ -58,8 +58,10 @@ export default defineComponent({
         this.$router.push("/login");
       } else if (!loggedIn || newPath == "/register/" || newPath == "/register") {
         this.$router.push("/register");
+      } else if (newPath == '/app-integration') {
+        return;
       } else {
-        this.$router.push("purchase-order");
+        this.$router.push("/contact");
       }
       const {
         code,
