@@ -311,6 +311,7 @@ export default defineComponent({
         showForm: ref(false),
         contacts: ref([]),
         search: ref(''),
+        connections: ref([]),
       };
     },
     methods: {
@@ -335,6 +336,8 @@ export default defineComponent({
         this.contacts = data.Contacts;
       },
       createPurchaseOrder() {
+        if (this.connections.length <= 0)
+          return this.$message.error('Please Connect your xero organization before able to create Purchase Order by go to Application page');
         this.selectedPO = {
           ContactID: undefined,
           PurchaseOrderNumber: "",
@@ -393,8 +396,21 @@ export default defineComponent({
             this.$message.error('Oopss, failed to approve Purchase Order');
           });
       },
+      async findAllConnection() {
+        this.loading = true;
+        await XeroRepository.getAllConnection()
+          .then(({ data }) => {
+            this.connections = data;
+            this.loading = false;
+          })
+          .catch(() => {
+            this.loading = false;
+            this.connections = [];
+          });
+      },
     },
     async mounted() {
+      this.findAllConnection();
       await this.findAllContact();
       await this.findPurchaseOrder();
     },

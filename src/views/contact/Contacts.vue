@@ -248,6 +248,7 @@ export default defineComponent({
           selectedContact: {},
           showForm: ref(false),
           formContent: ref({}),
+          connections: ref([]),
         };
     },
     methods: {
@@ -258,6 +259,8 @@ export default defineComponent({
         if (this.contacts.length > 0) this.selectedContact = this.contacts[0];
       },
       createContact() {
+        if (this.connections.length <= 0)
+          return this.$message.error('Please Connect your xero organization before able to create contacts by go to Application page');
         this.showForm = true;
         this.formContent = {};
       },
@@ -286,8 +289,21 @@ export default defineComponent({
           "Overdue": data.Overdue,
         };
       },
+      async findAllConnection() {
+        this.loading = true;
+        await XeroRepository.getAllConnection()
+          .then(({ data }) => {
+            this.connections = data;
+            this.loading = false;
+          })
+          .catch(() => {
+            this.loading = false;
+            this.connections = [];
+          });
+      },
     },
     mounted() {
+      this.findAllConnection();
       this.findAllContact();
     }
 });

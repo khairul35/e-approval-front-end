@@ -1,7 +1,12 @@
 <template>
   <div>
-    <img src="@/assets/xero-logo.png" class="logo" @click="integrateXero"/>
+    <p>
+      <img src="@/assets/xero-logo.png" class="logo" @click="integrateXero"/>
+    </p>
     <h2>Integrate with Xero</h2>
+    <p align="right">
+      <a-button type="primary" @click="integrateXero">Integrate</a-button>
+    </p>
     <a-table
       :columns="columns"
       :row-key="record => record.id"
