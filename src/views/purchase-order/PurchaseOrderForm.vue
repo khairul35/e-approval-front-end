@@ -300,7 +300,7 @@ export default defineComponent({
           deliveryAddress: DeliveryAddress,
           telephone: Telephone,
           attentionTo: AttentionTo,
-          currency: Currency,
+          currencyCode: Currency,
         };
         if (this.po.PurchaseOrderID) {
           await PurchaseOrderRepository.updatePurchaseOrder(this.po.PurchaseOrderID, body).then(() => {
