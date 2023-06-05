@@ -19,6 +19,7 @@
         class="login-input width-full"
         size="large"
         @click="signIn"
+        :loading="loading"
       >
         Sign In
       </a-button>
@@ -38,6 +39,7 @@ export default defineComponent({
       return {
         username: ref<string>(''),
         password: ref<string>(''),
+        loading: ref<boolean>(false),
       };
     },
     methods: {
@@ -45,16 +47,19 @@ export default defineComponent({
         localStorage.setItem('accessToken', null);
         if (this.username.length <= 0 || this.password.length <= 0)
           return this.$message.error('Username and Password is required!');
+        this.loading = true;
         await AuthRepository.signIn(this.username, this.password)
           .then(async ({ data }) => {
             await localStorage.setItem('accessToken', data.accessToken);
             await localStorage.setItem('logged_in', 'true');
             this.$message.success('Sign In Successfully');
+            this.loading = false;
             window.location.reload();
           })
           .catch((err) => {
             console.log(err);
             this.$message.error(err.message);
+            this.loading = false;
           });
       },
     },

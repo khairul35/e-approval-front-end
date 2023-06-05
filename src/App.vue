@@ -45,6 +45,7 @@ export default defineComponent({
   },
   methods: {
     async generateToken() {
+      console.log('called')
       await XeroRepository.generateToken(this.code)
         .then(() => {
           window.location.reload();
@@ -59,22 +60,22 @@ export default defineComponent({
       } else if (!loggedIn || newPath == "/register/" || newPath == "/register") {
         this.$router.push("/register");
       } else if (newPath == '/app-integration') {
+        const {
+          code,
+          scope,
+          session_state,
+          state
+        } = getQueryParametersFromCurrentURL();
+        this.code = code;
+        this.scope = scope;
+        this.sessionState = session_state;
+        this.state = state;
+        if (code) {
+          this.generateToken();
+        }
         return;
       } else {
         this.$router.push("/contact");
-      }
-      const {
-        code,
-        scope,
-        session_state,
-        state
-      } = getQueryParametersFromCurrentURL();
-      this.code = code;
-      this.scope = scope;
-      this.sessionState = session_state;
-      this.state = state;
-      if (code) {
-        this.generateToken();
       }
   }
 })
