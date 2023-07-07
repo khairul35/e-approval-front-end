@@ -21,12 +21,18 @@
           </router-link>
         </a-menu-item>
         <a-menu-item key="4">
+          <router-link to="/invoice">
+          <file-add-outlined />
+            <span>Invoice</span>
+          </router-link>
+        </a-menu-item>
+        <a-menu-item key="5">
           <router-link to="/user">
           <UserOutlined />
             <span>Users</span>
           </router-link>
         </a-menu-item>
-        <a-menu-item key="5">
+        <a-menu-item key="6">
           <router-link to="/app-integration">
             <cluster-outlined />
             <span>Application</span>

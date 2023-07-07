@@ -4,7 +4,7 @@
       <a-col :xl="8" :lg="8" :md="24" :sm="24" :xs="24">
         <div>
           <a-button type="primary" class="add-button" size="large" @click="createPurchaseOrder">
-            Create new Purchase Order
+            Create new Invoice
           </a-button>
             <a-input
               placeholder="Search"
@@ -13,18 +13,13 @@
               v-model:value="search"
             />
           <div class="list-container">
-            <div v-for="item in filtrate(purchaseOrders)" :key="item.PurchaseOrderNumber">
+            <div v-for="item in filtrate(invoices)" :key="item.id">
               <a-card
                 class="card clickable hoverable"
                 @click="select(item)"
-                :style="item.PurchaseOrderID == selectedPO.PurchaseOrderID ? `border-left: 10px solid #3490FF`: ''">
-                {{ item.PurchaseOrderNumber }}
+                :style="item.id == selectedInvoice.id ? `border-left: 10px solid #3490FF`: ''">
+                {{ item.type }} {{ item.id }}
               </a-card>
-            </div>
-            <div
-              v-if="purchaseOrders.length <= 0"
-              style="padding-top: 30px">
-              No Purchase Order
             </div>
           </div>
         </div>
@@ -35,13 +30,12 @@
         :md="24"
         :sm="24"
         :xs="24"
-        v-if="selectedPO.PurchaseOrderID"
         style="line-height: 30px"
+        v-if="selectedInvoice.id"
       >
         <h1 style="font-weight: bold; font-size: 30px;">
-          {{ selectedPO.PurchaseOrderNumber }}
+          {{ selectedInvoice.type }} {{ selectedInvoice.id }}
         </h1>
-        <a-divider />
         <div align="left">
           <div align="right">
             <a-popover
@@ -49,8 +43,8 @@
               placement="bottom"
             >
               <template #content>
-                <p class="action-option" @click="onEdit(selectedPO)">Edit</p>
-                <p class="action-option" v-if="selectedPO.IsApproved == 0" @click="approve(selectedPO.PurchaseOrderID)">Approve</p>
+                <p class="action-option" @click="onEdit(selectedInvoice)">Edit</p>
+                <p class="action-option" v-if="selectedInvoice.isApproved == 0" @click="approve(selectedInvoice.id)">Approve</p>
               </template>
               <a-button>Action</a-button>
             </a-popover>
@@ -61,72 +55,40 @@
             </a-col>
             <a-col :xl="18" :lg="16" :md="16" :sm="24" :xs="24">
               :
-              <a-tag color="orange" v-if="selectedPO.IsApproved == 0">
+              <a-tag color="orange" v-if="selectedInvoice.isApproved == 0">
                 Pending Approval
               </a-tag>
-              <a-tag color="green" v-if="selectedPO.IsApproved == 1">
+              <a-tag color="green" v-if="selectedInvoice.isApproved == 1">
                 Approved
-                {{ selectedPO.ApprovedBy ? `by ${selectedPO.ApprovedBy}` : '' }}
+                {{ selectedInvoice.approvedBy ? `by @${selectedInvoice.approvedBy}` : '' }}
               </a-tag>
-              <a-tag color="red" v-if="selectedPO.IsApproved == 2">
+              <a-tag color="red" v-if="selectedInvoice.isApproved == 2">
                 Rejected
               </a-tag>
             </a-col>
           </a-row>
           <a-row :gutter="16">
             <a-col :xl="6" :lg="8" :md="8" :sm="24" :xs="24">
-              <b>Created Date</b>
+              <b>Date</b>
             </a-col>
             <a-col :xl="18" :lg="16" :md="16" :sm="24" :xs="24">
-              : {{ getDate(selectedPO.CreatedDate) || '-' }}
+              : {{ getDate(selectedInvoice.date) || '-' }}
             </a-col>
           </a-row>
           <a-row :gutter="16">
             <a-col :xl="6" :lg="8" :md="8" :sm="24" :xs="24">
-             <b>Delivery Date</b>
+              <b>Due Date</b>
             </a-col>
             <a-col :xl="18" :lg="16" :md="16" :sm="24" :xs="24">
-              : {{ getDate(selectedPO.DeliveryDate) || '-' }}
+              : {{ getDate(selectedInvoice.dueDate) || '-' }}
             </a-col>
           </a-row>
           <a-row :gutter="16">
             <a-col :xl="6" :lg="8" :md="8" :sm="24" :xs="24">
-              <b>Delivery Address</b>
+              <b>reference</b>
             </a-col>
             <a-col :xl="18" :lg="16" :md="16" :sm="24" :xs="24">
-              : {{ selectedPO.DeliveryAddress || '-' }}
-            </a-col>
-          </a-row>
-          <a-row :gutter="16">
-            <a-col :xl="6" :lg="8" :md="8" :sm="24" :xs="24">
-              <b>Attention To</b>
-            </a-col>
-            <a-col :xl="18" :lg="16" :md="16" :sm="24" :xs="24">
-              : {{ selectedPO.AttentionTo || '-' }}
-            </a-col>
-          </a-row>
-          <a-row :gutter="16">
-            <a-col :xl="6" :lg="8" :md="8" :sm="24" :xs="24">
-              <b>Telephone</b>
-            </a-col>
-            <a-col :xl="18" :lg="16" :md="16" :sm="24" :xs="24">
-              : {{ selectedPO.Telephone || '-' }}
-            </a-col>
-          </a-row>
-          <a-row :gutter="16">
-            <a-col :xl="6" :lg="8" :md="8" :sm="24" :xs="24">
-              <b>Delivery Instructions</b>
-            </a-col>
-            <a-col :xl="18" :lg="16" :md="16" :sm="24" :xs="24">
-              : {{ selectedPO.DeliveryInstructions || '-' }}
-            </a-col>
-          </a-row>
-          <a-row :gutter="16">
-            <a-col :xl="6" :lg="8" :md="8" :sm="24" :xs="24">
-              <b>Currency</b>
-            </a-col>
-            <a-col :xl="18" :lg="16" :md="16" :sm="24" :xs="24">
-              : {{ selectedPO.CurrencyCode }}
+              : {{ selectedInvoice.reference || '-' }}
             </a-col>
           </a-row>
           <a-divider />
@@ -135,11 +97,11 @@
           </a-row>
           <a-row :gutter="16">
             <a-col :span="24">
-              <a-table :columns="columns" :data-source="selectedPO.lineItems" :pagination="false">
+              <a-table :columns="columns" :data-source="selectedInvoice.lineItems" :pagination="false">
                 <template #footer>
                   <div align="right">
                     <h3
-                      v-for="item in calculateTotalByCategory(selectedPO.lineItems)"
+                      v-for="item in calculateTotalByCategory(selectedInvoice.lineItems)"
                       :key="item.category"
                     >
                       <a-row :gutter="16">
@@ -158,7 +120,7 @@
                           Subtotal
                         </a-col>
                         <a-col :span="4">
-                          {{ selectedPO.SubTotal || 0 }}
+                          {{ selectedInvoice.subTotal || 0 }}
                         </a-col>
                       </a-row>
                     </h3>
@@ -168,7 +130,7 @@
                           Total
                         </a-col>
                         <a-col :span="4">
-                          {{ selectedPO.Total || 0 }}
+                          {{ selectedInvoice.total || 0 }}
                         </a-col>
                       </a-row>
                     </h3>
@@ -177,86 +139,14 @@
               </a-table>
             </a-col>
           </a-row>
-          <a-divider />
-          <a-row style="margin-top: 30px">
-            <h2>Contact Detail</h2>
-          </a-row>
-          <a-row :gutter="16">
-            <a-col :xl="6" :lg="8" :md="8" :sm="24" :xs="24">
-              <b>Name</b>
-            </a-col>
-            <a-col :xl="18" :lg="16" :md="16" :sm="24" :xs="24">
-              : {{ getContactName(getContacts(selectedPO.ContactID)) }}
-            </a-col>
-          </a-row>
-          <a-row :gutter="16">
-            <a-col :xl="6" :lg="8" :md="8" :sm="24" :xs="24">
-              <b>Phone Number</b>
-            </a-col>
-            <a-col :xl="18" :lg="16" :md="16" :sm="24" :xs="24">
-              <a-row :gutter="16">
-                <a-col :span="1">
-                  :
-                </a-col>
-                <a-col :span="23">
-                  <div v-for="item in getContacts(selectedPO.ContactID).Phones" :key="item" class="sub-item-box">
-                    <a-row :gutter="16">
-                      <a-col :span="8"><b>Phone Type</b></a-col>
-                      <a-col :span="16">: {{ item.PhoneType }}</a-col>
-                    </a-row>
-                    <a-row :gutter="16">
-                      <a-col :span="8"><b>Phone Number</b></a-col>
-                      <a-col :span="16">: {{ item.PhoneCountryCode }}{{ item.PhoneNumber }}</a-col>
-                    </a-row>
-                  </div>
-                </a-col>
-              </a-row>
-            </a-col>
-          </a-row>
-          <a-row :gutter="16" style="margin-top: 20px">
-            <a-col :xl="6" :lg="8" :md="8" :sm="24" :xs="24">
-              <b>Addresses</b>
-            </a-col>
-            <a-col :xl="18" :lg="16" :md="16" :sm="24" :xs="24">
-              <a-row :gutter="16">
-                <a-col :span="1">
-                  :
-                </a-col>
-                <a-col :span="23">
-                  <div v-for="item in (getContacts(selectedPO.ContactID).Addresses)" :key="item" class="sub-item-box">
-                    <a-row :gutter="16">
-                      <a-col :span="8"><b>Address Type</b></a-col>
-                      <a-col :span="16">: {{ item.AddressType }}</a-col>
-                    </a-row>
-                    <a-row :gutter="16">
-                      <a-col :span="8"><b>City</b></a-col>
-                      <a-col :span="16">: {{ item.City }}</a-col>
-                    </a-row>
-                    <a-row :gutter="16">
-                      <a-col :span="8"><b>Region</b></a-col>
-                      <a-col :span="16">: {{ item.Region }}</a-col>
-                    </a-row>
-                    <a-row :gutter="16">
-                      <a-col :span="8"><b>Postal Code</b></a-col>
-                      <a-col :span="16">: {{ item.PostalCode }}</a-col>
-                    </a-row>
-                    <a-row :gutter="16">
-                      <a-col :span="8"><b>Country</b></a-col>
-                      <a-col :span="16">: {{ item.Country }}</a-col>
-                    </a-row>
-                  </div>
-                </a-col>
-              </a-row>
-            </a-col>
-          </a-row>
         </div>
       </a-col>
     </a-row>
-    <PurchaseOrderForm
+    <InvoiceForm
       :showForm="showForm"
-      :po="selectedPO"
+      :invoice="selectedInvoice"
       @close="showForm = false"
-      @success="findPurchaseOrder"
+      @success="findAllInvoice"
       :contacts="contacts"
       :products="products"
     />
@@ -265,14 +155,38 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue'
-import dayjs from 'dayjs';
-import PurchaseOrderForm from './PurchaseOrderForm.vue';
-import PurchaseOrderRepository from '@/repository/PurchaseOrderRepository';
+import dayjs, { Dayjs } from 'dayjs';
+import InvoiceForm from './InvoiceForm.vue';
+import InvoiceRepository from '@/repository/InvoiceRepository';
 import ProductRepository from '@/repository/ProductRepository';
 import XeroRepository from '@/repository/XeroRepository';
-// import {
-//   EllipsisOutlined,
-// } from "@ant-design/icons-vue";
+
+interface Invoice {
+  id: number;
+  type: string;
+  contactId: string;
+  date: Dayjs;
+  dueDate: Dayjs;
+  reference: string;
+  status: string;
+  createdBy: string;
+  tenantId: string;
+  xeroInvoiceId: string | null;
+  approvedBy: string | null;
+  approvedDate: Date | null;
+  isApproved: number;
+  lineItems: LineItem[];
+  subTotal: number;
+  total: number;
+}
+
+interface LineItem {
+  description: string;
+  quantity: number;
+  unitAmount: number;
+  discountRate: number;
+  category: null,
+}
 
 const columns = [
   {
@@ -304,14 +218,8 @@ const columns = [
     align: 'center',
   },
   {
-    title: 'Tax Amount',
-    dataIndex: 'taxAmount',
-    key: 'TaxAmount',
-    align: 'center',
-  },
-  {
     title: 'Total',
-    dataIndex: 'total',
+    dataIndex: 'lineAmount',
     key: 'LineAmount',
     align: 'center',
   },
@@ -320,14 +228,40 @@ const columns = [
 export default defineComponent({
     name: 'purchase-order',
     components: {
-      PurchaseOrderForm,
+      InvoiceForm,
       // EllipsisOutlined,
     },
     data() {
+      const emptyInvoice: Invoice = {
+        id: 0,
+        type: "",
+        contactId: "",
+        date: dayjs(new Date()),
+        dueDate: dayjs(new Date()),
+        reference: "",
+        status: "",
+        createdBy: "",
+        tenantId: "",
+        xeroInvoiceId: null,
+        approvedBy: null,
+        approvedDate: null,
+        isApproved: 0,
+        lineItems: 
+          [{
+            description: '',
+            quantity: 1,
+            unitAmount: 0,
+            discountRate: 0,
+            category: null,
+          }],
+        subTotal: 0,
+        total: 0,
+      };
       return {
         columns,
-        purchaseOrders: ref([]),
-        selectedPO: ref({}),
+        emptyInvoice,
+        invoices: ref<Invoice[]>([]),
+        selectedInvoice: ref<Invoice>(emptyInvoice),
         showForm: ref(false),
         contacts: ref([]),
         search: ref(''),
@@ -340,16 +274,16 @@ export default defineComponent({
         if (!contactID) return {};
         return this.contacts.find(e => e.ContactID == contactID);
       },
-      filtrate(POs) {
-        if (this.search.length <= 0) return POs;
-        return POs
-          .filter((e) => (e.PurchaseOrderNumber || '').toLowerCase().includes(this.search.toLowerCase()))
+      filtrate(invoices) {
+        if (this.search.length <= 0) return invoices;
+        return invoices
+          .filter((e) => (e.type || '').toLowerCase().includes(this.search.toLowerCase()))
       },
-      async findPurchaseOrder() {
-        const { data } = await PurchaseOrderRepository.findAllPurchaseOrder();
-        this.purchaseOrders = data;
+      async findAllInvoice() {
+        const { data } = await InvoiceRepository.findAllInvoice();
+        this.invoices = data;
         if (data.length > 0) {
-          this.selectedPO = data[0];
+          this.selectedInvoice = data[0];
         }
       },
       async findAllContact() {
@@ -358,33 +292,14 @@ export default defineComponent({
       },
       createPurchaseOrder() {
         if (this.connections.length <= 0)
-          return this.$message.error('Please Connect your xero organization before able to create Purchase Order by go to Application page');
-        this.selectedPO = {
-          ContactID: undefined,
-          PurchaseOrderNumber: "",
-          lineItems: [
-            {
-              description: "item",
-              quantity: 1,
-              unitAmount: 0,
-              discountRate: 0,
-              tax: 0,
-            }
-          ],
-          CreatedDate: dayjs(new Date()),
-          DeliveryDate: dayjs(new Date()),
-          DeliveryInstructions: "",
-          DeliveryAddress: "",
-          Currency: undefined,
-          AttentionTo: "",
-          Telephone: "",
-        };
+          return this.$message.error('Please Connect your xero organization before able to create invoice by go to Application page');
+        this.selectedInvoice = this.emptyInvoice;
         this.showForm = true;
       },
       onEdit(record) {
-        this.selectedPO = record;
-        this.selectedPO.CreatedDate = dayjs(record.CreatedDate || new Date());
-        this.selectedPO.DeliveryDate = dayjs(record.DeliveryDate || new Date());
+        this.selectedInvoice = record;
+        this.selectedInvoice.date = dayjs(record.date || new Date());
+        this.selectedInvoice.dueDate = dayjs(record.dueDate || new Date());
         this.showForm = true;
       },
       getDate(datetime) {
@@ -404,17 +319,17 @@ export default defineComponent({
         return contact.Addresses;
       },
       select(item) {
-        this.selectedPO = item;
+        this.selectedInvoice = item;
       },
       async approve(id: number) {
-        await PurchaseOrderRepository.approvePurchaseOrder(id)
+        await InvoiceRepository.approveInvoice(id)
           .then(() => {
-            this.$message.success("Approve Purchase Order");
-            this.findPurchaseOrder();
+            this.$message.success("Approve invoice");
+            this.findAllInvoice();
           })
           .catch((err) => {
             window.console.log(err);
-            this.$message.error('Oopss, failed to approve Purchase Order');
+            this.$message.error('Oopss, failed to approve invoice');
           });
       },
       async findAllConnection() {
@@ -438,7 +353,7 @@ export default defineComponent({
 
         for (const lineItem of lineItems) {
           const category = lineItem.category;
-          const total = parseFloat(lineItem.total);
+          const total = parseFloat(lineItem.lineAmount);
 
           if (category in categoryTotals) {
             categoryTotals[category] += total;
@@ -459,7 +374,7 @@ export default defineComponent({
       this.findAllConnection();
       this.findAllProduct();
       await this.findAllContact();
-      await this.findPurchaseOrder();
+      await this.findAllInvoice();
     },
 })
 </script>
@@ -473,7 +388,7 @@ export default defineComponent({
 .list-container {
   margin: 5px;
   padding: 5px;
-  height: 72vh;
+  height: 70vh;
   background-color: #1a90ff23;
   overflow: auto;
 }
