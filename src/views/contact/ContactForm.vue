@@ -1,5 +1,5 @@
 <template>
-  <dev>
+  <div>
     <a-drawer
       v-model:visible="visible"
       :maskClosable="false"
@@ -239,7 +239,7 @@
         </div>
       </template>
     </a-drawer>
-  </dev>
+  </div>
 </template>
 
 <script lang="ts">

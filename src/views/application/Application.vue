@@ -59,13 +59,13 @@ const columns = [
   },
   {
     title: 'Created Date',
-    dataIndex: 'createdDateUtc',
+    dataIndex: 'createdDate',
     sorter: true,
     key: 'createdDate',
   },
   {
     title: 'Modified Date',
-    dataIndex: 'updatedDateUtc',
+    dataIndex: 'modifiedDate',
     sorter: true,
     key: 'modifiedDate',
   },
@@ -91,7 +91,7 @@ export default defineComponent({
       },
       getDisplayDate(datetime) {
         if (!datetime) return '-';
-        return moment(datetime).utc().format('DD MMM YYYY, HH:mm');
+        return moment(datetime).utc().format('DD MMM YYYY');
       },
       async findAllConnection() {
         this.loading = true;

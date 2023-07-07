@@ -139,6 +139,20 @@
               <a-table :columns="columns" :data-source="selectedPO.lineItems" :pagination="false">
                 <template #footer>
                   <div align="right">
+                    <h3
+                      v-for="item in calculateTotalByCategory(selectedPO.lineItems)"
+                      :key="item.category"
+                    >
+                      <a-row :gutter="16">
+                        <a-col :span="20">
+                          Total {{ item?.category || 'Unknown Category' }}
+                        </a-col>
+                        <a-col :span="4">
+                          {{ item.value }}
+                        </a-col>
+                      </a-row>
+                    </h3>
+                    <a-divider />
                     <h3>
                       <a-row :gutter="16">
                         <a-col :span="20">
@@ -245,6 +259,7 @@
       @close="showForm = false"
       @success="findPurchaseOrder"
       :contacts="contacts"
+      :products="products"
     />
   </div>
 </template>
@@ -254,6 +269,7 @@ import { defineComponent, ref } from 'vue'
 import dayjs from 'dayjs';
 import PurchaseOrderForm from './PurchaseOrderForm.vue';
 import PurchaseOrderRepository from '@/repository/PurchaseOrderRepository';
+import ProductRepository from '@/repository/ProductRepository';
 import XeroRepository from '@/repository/XeroRepository';
 // import {
 //   EllipsisOutlined,
@@ -264,6 +280,11 @@ const columns = [
     title: 'Description',
     dataIndex: 'description',
     key: 'Description',
+  },
+  {
+    title: 'Category',
+    dataIndex: 'category',
+    key: 'category',
   },
   {
     title: 'Quantity',
@@ -312,6 +333,7 @@ export default defineComponent({
         contacts: ref([]),
         search: ref(''),
         connections: ref([]),
+        products: ref([]),
       };
     },
     methods: {
@@ -408,9 +430,35 @@ export default defineComponent({
             this.connections = [];
           });
       },
+      async findAllProduct() {
+        const { data } = await ProductRepository.findAllProducts();
+        this.products = data;
+      },
+      calculateTotalByCategory(lineItems): { category: string; value: string }[] {
+        const categoryTotals: Record<string, number> = {};
+
+        for (const lineItem of lineItems) {
+          const category = lineItem.category;
+          const total = parseFloat(lineItem.total);
+
+          if (category in categoryTotals) {
+            categoryTotals[category] += total;
+          } else {
+            categoryTotals[category] = total;
+          }
+        }
+
+        const result: { category: string; value: string }[] = [];
+        for (const category in categoryTotals) {
+          result.push({ category, value: categoryTotals[category].toFixed(2) });
+        }
+
+        return result;
+      },
     },
     async mounted() {
       this.findAllConnection();
+      this.findAllProduct();
       await this.findAllContact();
       await this.findPurchaseOrder();
     },

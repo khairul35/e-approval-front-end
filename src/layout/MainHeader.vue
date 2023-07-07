@@ -38,6 +38,7 @@ import {
   MenuFoldOutlined,
 } from '@ant-design/icons-vue';
 import XeroRepository from '@/repository/XeroRepository';
+import UserRepository from '@/repository/UserRepository';
 
 export default defineComponent({
   data() {
@@ -70,6 +71,7 @@ export default defineComponent({
           this.connections = data;
           if (data.length > 0) {
             this.tenant = data[0].tenantId;
+            this.updateUserActiveTenant(data[0].tenantId);
             localStorage.setItem('tenant', data[0].tenantId);
           } else {
             this.showDialogRouteToApplication = true;
@@ -80,11 +82,17 @@ export default defineComponent({
           this.showDialogRouteToApplication = true;
         });
     },
+    async updateUserActiveTenant(tenant: string) {
+      await UserRepository.setActiveTenant(tenant).catch((err) => {
+          console.log(err);
+          this.$message.error('Oopss.. Failed to change organization');
+        })
+    },
   },
   watch: {
     tenant() {
-      localStorage.setItem('tenant', this.tenant);
-    }
+      this.updateUserActiveTenant(this.tenant);
+    },
   },
   mounted() {
     if (localStorage.getItem('logged_in') == 'true') {

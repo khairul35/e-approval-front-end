@@ -123,7 +123,15 @@
               <a-row :gutter="16">
                 <a-col :span="7">
                   <a-form-item label="Description">
-                    <a-input v-model:value="formState.lineItems[index].description" placeholder="Enter Description" />
+                    <a-select v-model:value="formState.lineItems[index].description" placeholder="Enter Description" >
+                      <a-select-option
+                        v-for="product in products"
+                        :key="product.id"
+                        :value="product.description"
+                        @click="productChange(index, product)">
+                        ({{ product.category }}): {{ product.description }}
+                      </a-select-option>
+                    </a-select>
                   </a-form-item>
                 </a-col>
                 <a-col :span="3">
@@ -213,7 +221,8 @@ interface LineItem {
   quantity: number;
   unitAmount: number;
   discountRate: number;
-  tax: number
+  tax: number;
+  category: null,
 }
 
 interface Contact {
@@ -238,6 +247,7 @@ export default defineComponent({
       showForm: Boolean,
       po: Object,
       contacts: Array,
+      products: Array,
     },
     components: {
       DeleteOutlined,
@@ -256,10 +266,11 @@ export default defineComponent({
           PurchaseOrderNumber: "",
           lineItems: [
             {
-              description: "item",
+              description: null,
               quantity: 1,
               unitAmount: 0,
               discountRate: 0,
+              category: null,
               tax: 0,
             }
           ],
@@ -324,12 +335,20 @@ export default defineComponent({
       },
       addItem() {
         this.formState.lineItems.push({
-          description: "item",
+          description: null,
           quantity: 1,
           unitAmount: 0,
           discountRate: 0,
+          category: null,
           tax: 0,
         });
+      },
+      productChange(index, product) {
+        this.formState.lineItems[index].quantity = 0;
+        this.formState.lineItems[index].unitAmount = product.unitAmount;
+        this.formState.lineItems[index].discountRate = 0;
+        this.formState.lineItems[index].tax = 0;
+        this.formState.lineItems[index].category = product.category;
       },
       openCurrencyForm() {
         this.showCurrencyForm = true;

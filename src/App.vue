@@ -45,7 +45,6 @@ export default defineComponent({
   },
   methods: {
     async generateToken() {
-      console.log('called')
       await XeroRepository.generateToken(this.code)
         .then(() => {
           window.location.reload();

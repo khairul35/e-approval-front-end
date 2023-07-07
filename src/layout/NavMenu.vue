@@ -9,18 +9,24 @@
           </router-link>
         </a-menu-item>
         <a-menu-item key="2">
+          <router-link to="/product">
+            <shopping-outlined />
+            <span>Product</span>
+          </router-link>
+        </a-menu-item>
+        <a-menu-item key="3">
           <router-link to="/purchase-order">
           <file-add-outlined />
             <span>Purchase Order</span>
           </router-link>
         </a-menu-item>
-        <!-- <a-menu-item key="3">
-          <router-link to="/bill">
-            <video-camera-outlined />
-            <span>Billed</span>
-          </router-link>
-        </a-menu-item> -->
         <a-menu-item key="4">
+          <router-link to="/user">
+          <UserOutlined />
+            <span>Users</span>
+          </router-link>
+        </a-menu-item>
+        <a-menu-item key="5">
           <router-link to="/app-integration">
             <cluster-outlined />
             <span>Application</span>
@@ -48,6 +54,8 @@ import {
   LogoutOutlined,
   ClusterOutlined,
   ContactsOutlined,
+  ShoppingOutlined,
+  UserOutlined,
 } from '@ant-design/icons-vue';
 
 export default defineComponent({
@@ -65,6 +73,8 @@ export default defineComponent({
     LogoutOutlined,
     ClusterOutlined,
     ContactsOutlined,
+    ShoppingOutlined,
+    UserOutlined,
   },
   methods: {
     handleLogout() {
